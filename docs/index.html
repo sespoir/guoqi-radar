@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#09111f" />
+    <meta
+      name="description"
+      content="国企与军工科研院所计算机类招聘信息聚合，每日自动更新。"
+    />
+    <meta property="og:title" content="国企雷达｜计算机类招聘信息每日更新" />
+    <meta
+      property="og:description"
+      content="每天巡查国企官网、军工科研院所、GitHub 与公开搜索渠道。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./og.png" />
+    <title>国企雷达｜计算机类招聘信息每日更新</title>
+    <link rel="icon" href="./favicon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="国企雷达首页">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <span>国企雷达</span>
+      </a>
+      <nav aria-label="主导航">
+        <a href="#jobs">岗位</a>
+        <a href="#sources">数据源</a>
+        <a href="#about">说明</a>
+      </nav>
+      <a
+        class="github-link"
+        href="https://github.com/sespoir/guoqi-radar"
+        target="_blank"
+        rel="noreferrer"
+      >GitHub <span>↗</span></a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="kicker"><span>AI</span> 国企技术岗聚合 Agent</p>
+            <h1>不错过每一个<br /><em>适合你的技术岗位</em></h1>
+            <p class="hero-description">
+              每天巡查国企官网与军工科研院所，并从 GitHub、高校就业网、
+              公开网页和搜索引擎已收录内容补充线索，自动筛选计算机及相近专业岗位。
+            </p>
+          </div>
+          <div class="agent-visual" aria-label="Agent 每日巡查状态">
+            <div class="radar">
+              <span class="radar-ring ring-one"></span>
+              <span class="radar-ring ring-two"></span>
+              <span class="radar-line"></span>
+              <span class="radar-dot dot-one"></span>
+              <span class="radar-dot dot-two"></span>
+              <span class="radar-dot dot-three"></span>
+              <b>R</b>
+            </div>
+            <div>
+              <small>AGENT STATUS</small>
+              <strong id="agent-status">正在读取最新数据</strong>
+              <span id="agent-source-count">官网 + 多渠道发现</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-shell">
+          <span class="search-icon" aria-hidden="true"></span>
+          <label class="sr-only" for="search">搜索企业、岗位、技能或城市</label>
+          <input id="search" type="search" placeholder="搜索企业、岗位、技能或城市…" />
+          <button id="search-button" type="button">搜索岗位</button>
+        </div>
+
+        <div class="stats-strip" aria-live="polite">
+          <div><strong id="job-count">—</strong><span>条技术招聘</span></div>
+          <div><strong id="company-count">—</strong><span>家发布单位</span></div>
+          <div><strong id="new-count">—</strong><span>今日新增</span></div>
+          <div class="last-update">
+            <span class="pulse"></span>
+            <span>最近更新<br /><b id="last-updated">正在读取</b></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-note" role="note">
+        <span>验</span>
+        <p>
+          <strong>所有来源都按核验等级展示。</strong>
+          社区和搜索结果只用于发现，报名条件、截止时间请回到企业官网确认。
+        </p>
+      </section>
+
+      <section class="workspace" id="jobs">
+        <aside class="filters">
+          <div class="section-title">
+            <div><p>精确筛选</p><h2>找到适合你的岗位</h2></div>
+            <button id="reset-filters" class="text-button" type="button">重置</button>
+          </div>
+
+          <label for="job-type">招聘类型</label>
+          <select id="job-type">
+            <option>全部类型</option>
+            <option>校园招聘</option>
+            <option>社会招聘</option>
+            <option>公开招聘</option>
+            <option>实习</option>
+          </select>
+
+          <label for="location">工作地区</label>
+          <select id="location"><option>全部地区</option></select>
+          <small>选择具体城市时，也会包含工作地为“全国”的岗位。</small>
+
+          <label for="verification">核验等级</label>
+          <select id="verification">
+            <option>全部来源</option>
+            <option>官网核验</option>
+            <option>可信转载</option>
+            <option>待核验线索</option>
+          </select>
+
+          <label class="check-row">
+            <span><strong>显示已截止岗位</strong><small>默认只看仍可申请的信息</small></span>
+            <input id="show-expired" type="checkbox" />
+          </label>
+
+          <div class="filter-note">
+            <b>准</b>
+            <p><strong>AI 相关度</strong><br />AI 不可用时自动使用本地规则筛选。</p>
+          </div>
+        </aside>
+
+        <div class="feed">
+          <div class="feed-header">
+            <div><p>RECRUITMENT FEED</p><h2>最新技术岗位 <span id="visible-count">0</span></h2></div>
+            <label class="sort-label">
+              <span class="sr-only">排序方式</span>
+              <select id="sort">
+                <option>最新发布</option>
+                <option>相关度</option>
+                <option>截止时间</option>
+              </select>
+            </label>
+          </div>
+          <div id="category-tabs" class="category-tabs" aria-label="岗位分类"></div>
+          <div id="job-list" class="job-list" aria-live="polite">
+            <div class="loading-card">正在读取每日采集结果…</div>
+          </div>
+        </div>
+
+        <aside class="right-rail">
+          <section class="rail-card">
+            <div class="rail-heading"><div><p>AGENT MONITOR</p><h2>巡查状态</h2></div><b id="health">读取中</b></div>
+            <div class="agent-metric">
+              <span class="mini-radar"><i></i></span>
+              <p><strong id="run-time">等待数据</strong><small>最近一次巡查</small></p>
+            </div>
+            <div class="agent-grid">
+              <div><strong id="source-count">—</strong><span>数据源</span></div>
+              <div><strong id="ai-mode">—</strong><span>识别模式</span></div>
+            </div>
+            <small class="next-run">下一次计划巡查：每天 09:17</small>
+          </section>
+
+          <section class="rail-card" id="sources">
+            <div class="rail-heading"><div><p>OFFICIAL + DISCOVERY</p><h2>最近巡查来源</h2></div></div>
+            <div id="source-list" class="source-list"></div>
+          </section>
+
+          <section class="rail-card explainer" id="about">
+            <span>01</span>
+            <h3>重点覆盖军工科研院所</h3>
+            <p>
+              包括中物院（绵阳九院）、中国电科 29 所与 38 所、
+              航空工业 611 所与 601 所，以及航天、兵器、中核等集团招聘平台。
+            </p>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand"><span class="brand-mark"><i></i><i></i><i></i></span><span>国企雷达</span></div>
+      <p>公开信息聚合工具，不代表任何招聘单位；请以官方公告为准。</p>
+      <span>由 GitHub Actions 每日更新</span>
+    </footer>
+  </body>
+</html>
